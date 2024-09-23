@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component
 
 @Component
 @Profile("testdata")
-@ConditionalOnProperty(name = ["polar.testdata.enabled"], havingValue = "true")
+@ConditionalOnProperty(name = ["bookshop.testdata.enabled"], havingValue = "true")
 class BookDataLoader(private val bookRepository: BookRepository) {
 
     @EventListener(ApplicationReadyEvent::class)

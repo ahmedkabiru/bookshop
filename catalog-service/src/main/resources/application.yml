@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: catalog-service
+server:
+  port: 9001
+
+bookshop:
+  greeting: "Welcome to Sam Bookshop"
+  testdata:
+    enabled: true

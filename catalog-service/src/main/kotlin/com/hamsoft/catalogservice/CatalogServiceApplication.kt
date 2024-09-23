@@ -1,11 +1,11 @@
 package com.hamsoft.catalogservice
 
-import com.hamsoft.catalogservice.config.PolarProperties
+import com.hamsoft.catalogservice.config.BookShopProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
 
-@EnableConfigurationProperties(PolarProperties::class)
+@EnableConfigurationProperties(BookShopProperties::class)
 @SpringBootApplication
 class CatalogServiceApplication
 
