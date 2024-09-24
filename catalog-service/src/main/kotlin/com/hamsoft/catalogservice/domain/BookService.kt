@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 @Service
 class BookService(private val bookRepository: BookRepository) {
 
-    fun viewBookList(): List<Book> {
+    fun viewBookList(): Iterable<Book> {
        return bookRepository.findAll()
     }
 
@@ -31,7 +31,9 @@ class BookService(private val bookRepository: BookRepository) {
                       isbn = book.isbn,
                       title = book.title,
                       author = book.author,
-                      price = book.price)
+                      price = book.price,
+                      publisher = book.publisher,
+                  )
                   return bookRepository.save(bookToUpdate)
             } ?: addBook(book)
     }

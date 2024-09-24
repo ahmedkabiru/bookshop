@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*
 class BookController (private val bookService: BookService) {
 
     @GetMapping
-    fun get(): List<Book> {
+    fun get(): Iterable<Book> {
         return bookService.viewBookList()
     }
 

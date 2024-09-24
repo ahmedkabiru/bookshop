@@ -1,10 +1,11 @@
 package com.hamsoft.catalogservice.domain
 
-import com.hamsoft.catalogservice.domain.Book
+import org.springframework.data.jdbc.repository.query.Modifying
+import org.springframework.data.jdbc.repository.query.Query
+import org.springframework.data.repository.CrudRepository
+import org.springframework.transaction.annotation.Transactional
 
-interface BookRepository {
-
-    fun findAll(): List<Book>
+interface BookRepository : CrudRepository<Book, Long> {
 
     fun findByIsbn(isbn: String): Book?
 
@@ -12,5 +13,8 @@ interface BookRepository {
 
     fun save(book: Book): Book
 
+    @Modifying
+    @Transactional
+    @Query("delete from books where isbn = :isbn")
     fun deleteByIsbn(isbn: String)
 }

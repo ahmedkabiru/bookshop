@@ -27,6 +27,13 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-config")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.retry:spring-retry")
+	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+	implementation("org.flywaydb:flyway-core")
+	implementation("org.flywaydb:flyway-database-postgresql")
+	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+
+	runtimeOnly("org.postgresql:postgresql")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -47,3 +54,9 @@ kotlin {
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+
+
+tasks.bootRun {
+		systemProperty ("spring.profiles.active", "testdata")
+}
+
