@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
@@ -32,9 +34,13 @@ dependencies {
 	implementation("org.flywaydb:flyway-database-postgresql")
 	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
 
+
 	runtimeOnly("org.postgresql:postgresql")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.springframework.boot:spring-boot-testcontainers")
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:postgresql")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
@@ -57,6 +63,18 @@ tasks.withType<Test> {
 
 
 tasks.bootRun {
-		systemProperty ("spring.profiles.active", "testdata")
+	systemProperty ("spring.profiles.active", "testdata")
+}
+
+tasks.named<BootBuildImage>("bootBuildImage") {
+	imageName.set("ghcr.io/ahmedkabiru/${project.name}")
+	environment.put("BP_JVM_VERSION","17.*")
+	publish.set(true)
+	docker {
+		publishRegistry {
+			username.set(project.findProperty("registryUsername") as? String)
+			password.set(project.findProperty("registryToken") as? String)
+		}
+	}
 }
 

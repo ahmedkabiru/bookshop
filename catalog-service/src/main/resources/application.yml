@@ -17,8 +17,6 @@ spring:
   docker:
     compose:
       file: ./docker-compose.yml
-      skip:
-        in-tests: true
 server:
   port: 9001
 
