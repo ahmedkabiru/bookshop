@@ -67,14 +67,6 @@ tasks.bootRun {
 }
 
 tasks.named<BootBuildImage>("bootBuildImage") {
-	imageName.set("ghcr.io/ahmedkabiru/${project.name}")
 	environment.put("BP_JVM_VERSION","17.*")
-	publish.set(true)
-	docker {
-		publishRegistry {
-			username.set(project.findProperty("registryUsername") as? String)
-			password.set(project.findProperty("registryToken") as? String)
-		}
-	}
 }
 
