@@ -2,8 +2,9 @@ name: commit-stage
 on: push
 env:
   REGISTRY: ghcr.io
-  VERSION: latest
+  VERSION: ${{ github.sha }}
   JAVA_VERSION: 17
+
 jobs:
   build:
     name: Build and Test
@@ -85,5 +86,8 @@ jobs:
          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish container Image
         run: docker push ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.service }}:${{ env.VERSION }}
-
-
+      - name:  Publish container image
+        run: docker tag ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.service }}:${{ env.VERSION }} \
+          ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+ 
