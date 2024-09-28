@@ -3,6 +3,7 @@ on: push
 env:
   REGISTRY: ghcr.io
   VERSION: latest
+  JAVA_VERSION: 17
 jobs:
   build:
     name: Build and Test
@@ -20,7 +21,7 @@ jobs:
         uses: actions/setup-java@v4.3.0
         with:
           distribution: temurin
-          java-version: 17
+          java-version: ${{ env.JAVA_VERSION }}
           cache: gradle
       - name: Code vulnerability scanning
         uses: anchore/scan-action@v4
@@ -57,10 +58,32 @@ jobs:
         uses: actions/setup-java@v4.3.0
         with:
           distribution: temurin
-          java-version: 17
+          java-version: ${{ env.JAVA_VERSION }}
           cache: gradle
       - name: Build container image
         run: |
           chmod +x gradlew
           ./gradlew :${{ matrix.service }}:bootBuildImage \
             --imageName ${{ env.REGISTRY }}/${{ matrix.service }}:${{ env.VERSION }}
+      - name: OCI image vulnerability scan
+        uses: anchore/scan-action@v4
+        id: scan
+        with:
+          image: ${{ env.REGISTRY }}/${{ matrix.service }}:${{ env.VERSION }}
+          fail-build: false
+          severity-cutoff: 'high'
+      - name: Upload Vulnerability report
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: ${{ steps.scan.outputs.sarif }}
+      - name: Log into container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: $${{ secrets.GITHUB_TOKEN }}
+      - name: Publish container Image
+        run: docker push ${{ env.REGISTRY }}/${{ matrix.service }}:${{ env.VERSION }}
+
+
