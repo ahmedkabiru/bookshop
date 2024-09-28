@@ -40,7 +40,7 @@ jobs:
           ./gradlew :${{ matrix.service }}:build
   package:
     name: Package and Publish
-    if: ${{ github.ref == 'refs/head/main' }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: [build]
     runs-on: ubuntu-latest
     permissions:
