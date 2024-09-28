@@ -39,8 +39,6 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew :${{ matrix.service }}:build
-    outputs:
-      workspace: ${{ steps.checkout.outputs.workspace }}
   package:
     name: Package and Publish
     if: ${{ github.ref == 'refs/heads/main' }}
@@ -54,6 +52,8 @@ jobs:
       matrix:
         service: [catalog-service,config-server]
     steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4.1.3
       - name: Set up JDK
         uses: actions/setup-java@v4.3.0
         with:
@@ -81,8 +81,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.repository_owner }}
-          password: $${{ secrets.CR_PAT }}
+          username: ${{ github.actor }}
+          password: $${{ secrets.GITHUB_TOKEN }}
       - name: Publish container Image
         run: docker push ${{ env.REGISTRY }}/${{ matrix.service }}:${{ env.VERSION }}
 
