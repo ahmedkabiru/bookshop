@@ -89,6 +89,6 @@ jobs:
       - name:  Publish container image
         run: |
           docker tag ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.service }}:${{ env.VERSION }} \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.service }}:latest
+          docker push ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.service }}:latest
  
