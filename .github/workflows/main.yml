@@ -24,18 +24,6 @@ jobs:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
           cache: gradle
-#      - name: Code vulnerability scanning
-#        uses: anchore/scan-action@v4
-#        id: scan
-#        with:
-#          path: "${{ github.workspace }}"
-#          fail-build: false
-#          severity-cutoff: 'high'
-#      - name: Upload Vulnerability report
-#        uses: github/codeql-action/upload-sarif@v3
-#        if: always()
-#        with:
-#          sarif_file: ${{ steps.scan.outputs.sarif }}
       - name: Build, unit test, and Integration Test
         run: |
           chmod +x gradlew
@@ -66,18 +54,6 @@ jobs:
           chmod +x gradlew
           ./gradlew :${{ matrix.service }}:bootBuildImage \
             --imageName ${{ env.REGISTRY }}/${{ github.actor }}/${{ matrix.service }}:${{ env.VERSION }}
-#      - name: OCI image vulnerability scan
-#        uses: anchore/scan-action@v4
-#        id: scan
-#        with:
-#          image: ${{ env.REGISTRY }}/${{ matrix.service }}:${{ env.VERSION }}
-#          fail-build: false
-#          severity-cutoff: 'high'
-#      - name: Upload Vulnerability report
-#        uses: github/codeql-action/upload-sarif@v3
-#        if: always()
-#        with:
-#          sarif_file: ${{ steps.scan.outputs.sarif }}
       - name: Log into container registry
         uses: docker/login-action@v3
         with:
