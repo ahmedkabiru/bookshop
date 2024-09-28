@@ -7,6 +7,9 @@ jobs:
     permissions:
       contents: read
       security-events: write
+    strategy:
+      matrix:
+        service: [catalog-service]
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4.1.3
@@ -31,5 +34,5 @@ jobs:
       - name: Build, unit test, and Integration Test
         run: |
           chmod +x gradlew
-          ./gradlew build
+          ./gradlew :${{ matrix.service }}:build
 
