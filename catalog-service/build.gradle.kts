@@ -63,7 +63,7 @@ tasks.withType<Test> {
 
 
 tasks.bootRun {
-	systemProperty ("spring.profiles.active", "testdata")
+	systemProperty ("spring.profiles.active", "dev")
 }
 
 tasks.named<BootBuildImage>("bootBuildImage") {
