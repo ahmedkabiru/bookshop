@@ -1,3 +1,3 @@
 rootProject.name = "bookshop"
 
-include("config-server", "catalog-service")
+include("config-server", "catalog-service", "order-service")

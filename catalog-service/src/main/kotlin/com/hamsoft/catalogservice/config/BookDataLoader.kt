@@ -9,7 +9,6 @@ import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
 
 @Component
-//@Profile("testdata")
 @ConditionalOnProperty(name = ["bookshop.testdata.enabled"], havingValue = "true")
 class BookDataLoader(private val bookRepository: BookRepository) {
 

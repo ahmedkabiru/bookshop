@@ -16,6 +16,13 @@ spring:
         initial-interval: 1000
         max-interval: 2000
         multiplier: 1.1
+  docker:
+    compose:
+      enabled: false
+  datasource:
+    url: jdbc:postgresql://localhost:5432/catalog_service_db
+    username: myuser
+    password: secret
 server:
   port: 9001
   shutdown: graceful
