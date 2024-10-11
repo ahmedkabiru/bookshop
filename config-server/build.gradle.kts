@@ -43,6 +43,7 @@ kotlin {
 }
 
 tasks.named<BootBuildImage>("bootBuildImage") {
+    imageName = project.name
     environment.put("BP_JVM_VERSION","17.*")
 }
 

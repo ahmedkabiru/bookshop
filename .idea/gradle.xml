@@ -10,6 +10,8 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/catalog-service" />
             <option value="$PROJECT_DIR$/config-server" />
+            <option value="$PROJECT_DIR$/dispatcher-service" />
+            <option value="$PROJECT_DIR$/edge-service" />
             <option value="$PROJECT_DIR$/order-service" />
           </set>
         </option>
@@ -19,6 +21,22 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/catalog-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/dispatcher-service" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/dispatcher-service" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/edge-service" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/edge-service" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -32,8 +32,6 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
-	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
-
 
 	runtimeOnly("org.postgresql:postgresql")
 
@@ -62,11 +60,9 @@ tasks.withType<Test> {
 }
 
 
-tasks.bootRun {
-	systemProperty ("spring.profiles.active", "dev")
-}
 
 tasks.named<BootBuildImage>("bootBuildImage") {
+	imageName = project.name
 	environment.put("BP_JVM_VERSION","17.*")
 }
 

@@ -1,3 +1,5 @@
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+
 plugins {
 	kotlin("jvm") version "1.9.25"
 	kotlin("plugin.spring") version "1.9.25"
@@ -7,6 +9,9 @@ plugins {
 
 group = "com.hamsoft"
 version = "0.0.1-SNAPSHOT"
+
+
+extra["springCloudVersion"] = "2023.0.3"
 
 java {
 	toolchain {
@@ -22,17 +27,24 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
+
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
+
 	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("org.postgresql:r2dbc-postgresql")
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
 	runtimeOnly("org.springframework:spring-jdbc")
 
-	developmentOnly("org.springframework.boot:spring-boot-docker-compose")
+	implementation("org.springframework.cloud:spring-cloud-stream")
+	implementation("org.springframework.cloud:spring-cloud-stream-binder-kafka")
+	implementation("org.springframework.kafka:spring-kafka")
+
+	testImplementation("org.springframework.cloud:spring-cloud-stream-test-binder")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("io.projectreactor:reactor-test")
@@ -42,6 +54,13 @@ dependencies {
 	testImplementation("org.testcontainers:r2dbc")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+	}
+}
+
 
 kotlin {
 	compilerOptions {
@@ -53,7 +72,9 @@ tasks.withType<Test> {
 	useJUnitPlatform()
 }
 
-tasks.bootRun {
-	systemProperty ("spring.profiles.active", "dev")
+
+tasks.named<BootBuildImage>("bootBuildImage") {
+	imageName = project.name
+	environment.put("BP_JVM_VERSION","17.*")
 }
 

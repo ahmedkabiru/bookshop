@@ -1,3 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-config
+  labels:
+    db: bookshop-postgres
+data:
+  init.sql: |
+    CREATE DATABASE catalog_service_db;
+    CREATE DATABASE order_service_db;
+
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -21,8 +33,9 @@ spec:
               value: user
             - name: POSTGRES_PASSWORD
               value: password
-            - name: POSTGRES_DB
-              value: catalog-service-db
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d
+              name: postgres-config-volume
           resources:
             requests:
               cpu: 100m
@@ -30,7 +43,10 @@ spec:
             limits:
               cpu: 200m
               memory: 120Mi
-
+      volumes:
+        - name: postgres-config-volume
+          configMap:
+            name: postgres-config
 ---
 apiVersion: v1
 kind: Service
