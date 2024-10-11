@@ -12,7 +12,7 @@ import org.springframework.integration.support.MessageBuilder
 import kotlin.test.assertEquals
 
 @SpringBootTest
-@Import(TestChannelBinderConfiguration::class)
+@Import(TestChannelBinderConfiguration::class,TestcontainersConfiguration::class)
 class FunctionStreamIntegrationTest {
 
     @Autowired

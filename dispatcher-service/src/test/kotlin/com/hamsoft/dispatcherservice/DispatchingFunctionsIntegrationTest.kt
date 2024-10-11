@@ -6,9 +6,11 @@ import java.util.function.Function
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.cloud.function.context.FunctionCatalog
 import org.springframework.cloud.function.context.test.FunctionalSpringBootTest
+import org.springframework.context.annotation.Import
 import reactor.core.publisher.Flux
 import reactor.test.StepVerifier
 
+@Import(TestcontainersConfiguration::class)
 @FunctionalSpringBootTest
 class DispatchingFunctionsIntegrationTest {
 
