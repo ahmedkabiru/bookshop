@@ -12,8 +12,8 @@ import org.springframework.integration.support.MessageBuilder
 import kotlin.test.assertEquals
 
 @SpringBootTest
-@Import(TestChannelBinderConfiguration::class,TestcontainersConfiguration::class)
-class FunctionStreamIntegrationTest {
+@Import(TestChannelBinderConfiguration::class)
+class FunctionStreamIntegrationTest : BaseIntegrationTest(){
 
     @Autowired
     lateinit var inputDestination: InputDestination
