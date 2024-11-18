@@ -1,4 +1,4 @@
-package com.hamsoft.edgeservice
+package com.hamsoft.edgeservice.controller
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

@@ -12,6 +12,8 @@ spring:
                     max-idle-time: 15s
                     max-life-time: 60s
             default-filters:
+                - SaveSession
+                - TokenRelay
                 - name: Retry
                   args:
                     retries: 3
@@ -44,23 +46,46 @@ spring:
                   predicates:
                      - Path=/orders/**
   data:
-    redis:
-      host: localhost
-      port: 6379
-      connect-timeout: 5s
-      timeout: 1s
+   redis:
+    host: localhost
+    port: 6375
+    connect-timeout: 5s
+    timeout: 1s
+
   security:
     oauth2:
       client:
         registration:
-          keycloak:
+          bookshop:
             client-id: edge-service
-            client-secret: keycloak-secret
-            scope: openid
+            client-secret: SuperSecret
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+            scope: openid,profile
         provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/realms/bookshop
+          bookshop:
+            issuer-uri: http://localhost:8001
 
 server:
-  port: 9000
+  port: 9999
   shutdown: graceful
+
+logging:
+  level:
+    org.springframework.security: TRACE
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,redis

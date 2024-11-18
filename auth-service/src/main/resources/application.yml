@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: auth-service
+  security:
+    user:
+      name: "user"
+      password: "password"
+      roles:
+        - USER
+        - ADMIN
+    oauth2:
+      authorizationserver:
+        client:
+          bookshop:
+            registration:
+              client-id: edge-service
+              client-secret: "{noop}SuperSecret"
+              client-authentication-methods:
+                - "client_secret_basic"
+              authorization-grant-types:
+                - "authorization_code"
+                - "refresh_token"
+                - "client_credentials"
+              redirect-uris:
+                - "http://localhost:9999/login/oauth2/code/bookshop"
+              scopes:
+                - "openid"
+                - "profile"
+              post-logout-redirect-uris:
+                - "http://localhost:9999"
+            require-authorization-consent: true
+
+server:
+  port: 8001
+
+logging:
+  level:
+    org.springframework.security: debug

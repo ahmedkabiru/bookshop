@@ -32,7 +32,7 @@ class BookService(private val bookRepository: BookRepository) {
                       title = book.title,
                       author = book.author,
                       price = book.price,
-                      publisher = book.publisher,
+                      publisher = book.publisher
                   )
                   return bookRepository.save(bookToUpdate)
             } ?: addBook(book)

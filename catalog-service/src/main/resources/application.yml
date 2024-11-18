@@ -20,6 +20,11 @@ spring:
     url: jdbc:postgresql://localhost:5432/catalog_service_db
     username: user
     password: password
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8001
 server:
   port: 9001
   shutdown: graceful
@@ -35,4 +40,13 @@ management:
   endpoints:
     web:
       exposure:
-        include: refresh
+        include: refresh,health,prometheus
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

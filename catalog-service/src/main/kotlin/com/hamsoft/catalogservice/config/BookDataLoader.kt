@@ -15,8 +15,8 @@ class BookDataLoader(private val bookRepository: BookRepository) {
     @EventListener(ApplicationReadyEvent::class)
     fun loadBookTestData(){
         bookRepository.deleteAll()
-        val book1 = Book(isbn ="1111", title= "AA",  author =  "John", price = 20.00, publisher = "Packt")
-        val book2 = Book(isbn="2222", title = "BB", author =  "Kim", price = 30.00, publisher = "Packt")
+        val book1 = Book(isbn ="1111", title= "AA",  author =  "John", price = 20.00, publisher = "Packt", createdBy = "", lastModifiedBy = "")
+        val book2 = Book(isbn="2222", title = "BB", author =  "Kim", price = 30.00, publisher = "Packt",createdBy = "", lastModifiedBy = "")
         bookRepository.saveAll(listOf(book1,book2))
     }
 }

@@ -30,11 +30,22 @@ spec:
             - name: BPL_JVM_THREAD_COUNT
               value: "50"
             - name: SPRING_R2DBC_URL
-              value: r2dbc:postgresql://bookshop-postgres/order_service_db
+              value: r2dbc:postgresql://postgres/order_service_db
             - name: SPRING_FLYWAY_URL
-              value: jdbc:postgresql://bookshop-postgres/order_service_db
+              value: jdbc:postgresql://postgres/order_service_db
             - name: CATALOG_SERVICE_URI
               value: http://catalog-service
             - name: KAFKA_BOOTSTRAP_SERVERS
               value: kafka-service:9092
-
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9002
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9002
+            initialDelaySeconds: 5
+            periodSeconds: 15

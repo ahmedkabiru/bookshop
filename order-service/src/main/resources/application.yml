@@ -29,7 +29,13 @@ spring:
           group: ${spring.application.name}
 
   kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:29092}
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8001
 
 server:
   port: 9002
@@ -40,3 +46,18 @@ server:
 
 bookshop:
   catalog-service-uri: "http://localhost:9001"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh,health
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}

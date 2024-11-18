@@ -5,5 +5,6 @@ include(
     "catalog-service",
     "order-service",
     "edge-service",
-    "dispatcher-service"
+    "dispatcher-service",
+    "auth-service"
 )

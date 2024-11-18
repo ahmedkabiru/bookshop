@@ -1,7 +1,138 @@
 services:
-  database:
+
+  # Applications
+  catalog-service:
+    image: 'catalog-service'
+    container_name: 'catalog-service'
+    ports:
+      - '9001:9001'
+    depends_on:
+      - postgres
+      - fluent-bit
+      - tempo
+    environment:
+#      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.33.3.jar
+#      - OTEL_SERVICE_NAME=catalog-service
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+#      - OTEL_METRICS_EXPORTER=none
+      - SPRING_CLOUD_CONFIG_URI=http://config-server:8888
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/catalog_service_db
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-service:8081
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+
+  order-service:
+    depends_on:
+      - fluent-bit
+      - postgres
+      - kafka
+    image: 'order-service'
+    container_name: 'order-service'
+    ports:
+      - '9002:9002'
+    environment:
+#      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.33.3.jar
+#      - OTEL_SERVICE_NAME=order-service
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+#      - OTEL_METRICS_EXPORTER=none
+      - CATALOG_SERVICE_URI=http://catalog-service:9001
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - SPRING_R2DBC_URL=r2dbc:postgresql://postgres:5432/order_service_db
+      - SPRING_FLYWAY_URL=jdbc:postgresql://postgres:5432/order_service_db
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI=http://auth-service:8081
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+
+  dispatcher-service:
+    depends_on:
+      - fluent-bit
+      - kafka
+    image: "dispatcher-service"
+    container_name: dispatcher-service
+    ports:
+      - "9003:9003"
+    environment:
+#      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.33.3.jar
+#      - OTEL_SERVICE_NAME=dispatcher-service
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+#      - OTEL_METRICS_EXPORTER=none
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - SPRING_RABBITMQ_HOST=rabbitmq
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+
+  edge-service:
+    depends_on:
+      - fluent-bit
+      - redis
+    image: "edge-service"
+    container_name: "edge-service"
+    ports:
+      - "9999:9999"
+    environment:
+#      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.33.3.jar
+#      - OTEL_SERVICE_NAME=edge-service
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+#      - OTEL_METRICS_EXPORTER=none
+      - CATALOG_SERVICE_URL=http://catalog-service:9001
+      - ORDER_SERVICE_URL=http://order-service:9002
+      - SPRING_CLOUD_CONFIG_URI=http://config-service:8888
+      - SPRING_REDIS_HOST=redis
+      - SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_BOOKSHOP_ISSUER_URI=http://auth-service:8001
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+
+  config-server:
+    depends_on:
+      - fluent-bit
+    image: "config-server"
+    container_name: "config-server"
+    ports:
+      - "8888:8888"
+    environment:
+      # Buildpacks environment variable to configure the number of threads in memory calculation
+      - BPL_JVM_THREAD_COUNT=50
+#      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.33.3.jar
+#      - OTEL_SERVICE_NAME=config-service
+#      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+#      - OTEL_METRICS_EXPORTER=none
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+
+  auth-service:
+    depends_on:
+      - fluent-bit
+    image: "auth-service"
+    container_name: "auth-service"
+    ports:
+      - "8001:8001"
+    environment:
+      # Buildpacks environment variable to configure the number of threads in memory calculation
+      - BPL_JVM_THREAD_COUNT=50
+    #      - JAVA_TOOL_OPTIONS=-javaagent:/workspace/BOOT-INF/lib/opentelemetry-javaagent-1.33.3.jar
+    #      - OTEL_SERVICE_NAME=config-service
+    #      - OTEL_EXPORTER_OTLP_ENDPOINT=http://tempo:4317
+    #      - OTEL_METRICS_EXPORTER=none
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+
+
+  postgres:
     image: 'postgres'
-    container_name: 'bookshop-postgres'
+    container_name: 'postgres'
     ports:
       - '5432:5432'
     environment:
@@ -12,12 +143,13 @@ services:
 
   redis:
     image: 'redis'
-    container_name: 'bookshop-redis'
+    container_name: 'redis'
     ports:
       - '6379:6379'
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: 'zookeeper'
     ports:
       - '2181:2181'
     environment:
@@ -25,6 +157,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: 'kafka'
     depends_on:
        - zookeeper
     ports:
@@ -32,13 +165,14 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:a
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
+    container_name: 'kafka-ui'
     depends_on:
       - kafka
     ports:
@@ -48,12 +182,55 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
       KAFKA_CLUSTERS_0_ZOOKEEPER: "zookeeper:2181"
 
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:19.0
-    command: start-dev
-    environment:
-      - KEYCLOAK_ADMIN=user
-      - KEYCLOAK_ADMIN_PASSWORD=password
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: 'grafana'
+    depends_on:
+      - loki
+      - prometheus
+      - tempo
     ports:
-      - "8080:8080"
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=user
+      - GF_SECURITY_ADMIN_PASSWORD=password
+    volumes:
+      - ./observability/grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./observability/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./observability/grafana/grafana.ini:/etc/grafana/grafana.ini
+
+  loki:
+    image: grafana/loki:latest
+    container_name: 'loki'
+    depends_on:
+      - fluent-bit
+    ports:
+      - "3100:3100"
+
+  fluent-bit:
+    image: grafana/fluent-bit-plugin-loki:latest
+    container_name: 'fluent-bit'
+    ports:
+      - "24224:24224"
+    environment:
+      - LOKI_URL=http://loki:3100/loki/api/v1/push
+    volumes:
+      - ./observability/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf
+
+  prometheus:
+    image: quay.io/prometheus/prometheus:latest
+    container_name: 'prometheus'
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  tempo:
+    image: grafana/tempo:latest
+    container_name: 'tempo'
+    command: -config.file=/etc/tempo-config.yml
+    ports:
+      - "3110:3100"     # Tempo
+      - "4317:4317"     # OTel
+    volumes:
+      - ./observability/tempo/tempo.yml:/etc/tempo-config.yml

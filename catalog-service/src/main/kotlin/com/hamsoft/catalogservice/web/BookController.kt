@@ -3,6 +3,8 @@ package com.hamsoft.catalogservice.web
 import com.hamsoft.catalogservice.domain.Book
 import com.hamsoft.catalogservice.domain.BookService
 import jakarta.validation.Valid
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 
@@ -10,8 +12,12 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/books")
 class BookController (private val bookService: BookService) {
 
+    val log: Logger = LoggerFactory.getLogger(BookController::class.java)
+
+
     @GetMapping
     fun get(): Iterable<Book> {
+        log.info("Fetching the list of books in the catalog")
         return bookService.viewBookList()
     }
 
